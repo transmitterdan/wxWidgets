@@ -163,7 +163,11 @@ int wxGetTimeZone()
 #elif defined(__VISUALC__)
     // We must initialize the time zone information before using it (this will
     // be done only once internally).
-    _tzset();
+    static bool tzSetYet = false;
+    if (!tzSetYet) {
+        _tzset();
+        tzSetYet = true;
+    }
 
     // Starting with VC++ 8 timezone variable is deprecated and is not even
     // available in some standard library version so use the new function for
