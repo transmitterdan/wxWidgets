@@ -472,11 +472,11 @@ wxGUIAppTraits::GetStandardCmdLineOptions(wxArrayString& names,
 {
     wxString usage;
 
-    // check whether GLib version is lower than 2.39
-    // because, as we use the undocumented _GOptionGroup struct, we don't want
-    // to run this code with future versions which might change it (2.38 is the
-    // latest one at the time of this writing)
-    if (glib_check_version(2,39,0))
+    // Check whether GLib version is lower than the last tested version for
+    // which the code below works because, as we use the undocumented
+    // _GOptionGroup struct, we don't want to run this code with future
+    // versions which might change it and result in run-time crashes.
+    if (glib_check_version(2,50,0))
     {
         usage << _("The following standard GTK+ options are also supported:\n");
 
@@ -500,7 +500,12 @@ wxGUIAppTraits::GetStandardCmdLineOptions(wxArrayString& names,
             desc.push_back(wxString(entryDesc));
         }
 
+        // This function is deprecated in favour of g_option_group_unref(), but
+        // we need to continue using it as long as we support glib < 2.44 where
+        // the new function was introduced, so just suppress the warning.
+        wxGCC_WARNING_SUPPRESS(deprecated-declarations)
         g_option_group_free (gtkOpts);
+        wxGCC_WARNING_RESTORE(deprecated-declarations)
     }
 
     return usage;
