@@ -181,7 +181,7 @@ static void wxGtkTextApplyTagsFromAttr(GtkWidget *text,
 #elif GTK_CHECK_VERSION(2,11,0)
 // gtk+ doesn't support justify before gtk+-2.11.0 with pango-1.17 being available
 // (but if new enough pango isn't available it's a mere gtk warning)
-                if (!gtk_check_version(2,11,0))
+                if (wx_is_at_least_gtk2(11))
                 {
                     align = GTK_JUSTIFY_FILL;
                     break;
@@ -858,18 +858,14 @@ int wxTextCtrl::GTKIMFilterKeypress(GdkEventKey* event) const
     if (IsSingleLine())
         return wxTextEntry::GTKIMFilterKeypress(event);
 
-    int result;
+    int result = false;
 #if GTK_CHECK_VERSION(2, 22, 0)
-#ifndef __WXGTK3__
-    result = false;
-    if (gtk_check_version(2,22,0) == NULL)
-#endif
+    if (wx_is_at_least_gtk2(22))
     {
         result = gtk_text_view_im_context_filter_keypress(GTK_TEXT_VIEW(m_text), event);
     }
 #else // GTK+ < 2.22
     wxUnusedVar(event);
-    result = false;
 #endif // GTK+ 2.22+
 
     return result;
@@ -1796,41 +1792,6 @@ bool wxTextCtrl::GetStyle(long position, wxTextAttr& style)
 
 void wxTextCtrl::DoApplyWidgetStyle(GtkRcStyle *style)
 {
-#ifdef __WXGTK3__
-    // Preserve selection colors, otherwise the GTK_STATE_FLAG_NORMAL override
-    // will be used, and the selection is invisible
-    const GtkStateFlags selectedFocused =
-        GtkStateFlags(GTK_STATE_FLAG_SELECTED | GTK_STATE_FLAG_FOCUSED);
-    // remove any previous override
-    gtk_widget_override_color(m_text, GTK_STATE_FLAG_NORMAL, NULL);
-    gtk_widget_override_color(m_text, selectedFocused, NULL);
-    gtk_widget_override_background_color(m_text, GTK_STATE_FLAG_NORMAL, NULL);
-    gtk_widget_override_background_color(m_text, selectedFocused, NULL);
-    const bool fg_ok = m_foregroundColour.IsOk();
-    const bool bg_ok = m_backgroundColour.IsOk();
-    if (fg_ok || bg_ok)
-    {
-        GdkRGBA *fg_orig, *bg_orig;
-        GtkStyleContext* context = gtk_widget_get_style_context(m_text);
-        gtk_style_context_save(context);
-        if (IsMultiLine())
-            gtk_style_context_add_class(context, GTK_STYLE_CLASS_VIEW);
-        gtk_style_context_set_state(context, selectedFocused);
-        gtk_style_context_get(context, selectedFocused,
-            "color", &fg_orig, "background-color", &bg_orig,
-            NULL);
-        gtk_style_context_restore(context);
-
-        if (fg_ok)
-            gtk_widget_override_color(m_text, selectedFocused, fg_orig);
-        if (bg_ok)
-            gtk_widget_override_background_color(m_text, selectedFocused, bg_orig);
-
-        gdk_rgba_free(fg_orig);
-        gdk_rgba_free(bg_orig);
-    }
-#endif // __WXGTK3__
-
     GTKApplyStyle(m_text, style);
 }
 

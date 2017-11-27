@@ -109,6 +109,7 @@ All (GUI):
 
 - Allow wxWebView::RunScript() return values (Jose Lorenzo, GSoC 2017).
 - Allow using fractional pen widths with wxGraphicsContext (Adrien Tétar).
+- Add support for loading fonts from external files (Arthur Norman).
 - Improve wxSVGFileDC to support more of wxDC API (Maarten Bent).
 - Add support for wxAuiManager and wxAuiPaneInfo to XRC (Andrea Zanellato).
 - Add support for wxSL_MIN_MAX_LABELS and wxSL_VALUE_LABEL to XRC (ousnius).
@@ -173,6 +174,7 @@ wxGTK:
 - Make wxBORDER_NONE work for wxTextCtrl with GTK+ 3 (Adrien Tétar).
 - Apply wxTextCtrl::SetDefaultStyle() to user-entered text (Andreas Falkenhahn).
 - Fix wxTextCtrl::GetStyle() with GTK+ 3.
+- Fix wxButton::SetBitmapPosition() with GTK+ 3 (Jake Nelson).
 - Support background colour in wxDataViewCtrl attributes.
 - Improve wxSpinCtrl best size calculation.
 - Implement support for icon locations in wxMimeTypesManager (Hanmac).
@@ -223,6 +225,7 @@ wxMSW:
 - Fix updating radio groups when non-radio item is inserted to wxMenu.
 - Fix autoselecting the contents of wxTextCtrl with wxWANTS_CHARS style.
 - Implement SetIcon(), SetPosition(), GetPosition() for native wxProgressDialog.
+- Fix focus-related problems when using native wxProgressDialog.
 - Fix crash when reparenting the currently focused window to another TLW.
 
 wxOSX:

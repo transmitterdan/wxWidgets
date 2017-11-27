@@ -925,6 +925,7 @@ WX_ARG_FEATURE(notifmsg,    [  --enable-notifmsg       use wxNotificationMessage
 WX_ARG_FEATURE(odcombobox,  [  --enable-odcombobox     use wxOwnerDrawnComboBox class], wxUSE_ODCOMBOBOX)
 WX_ARG_FEATURE(popupwin,    [  --enable-popupwin       use wxPopUpWindow class], wxUSE_POPUPWIN)
 WX_ARG_FEATURE(prefseditor, [  --enable-prefseditor    use wxPreferencesEditor class], wxUSE_PREFERENCES_EDITOR)
+WX_ARG_FEATURE(privatefonts,[  --enable-privatefonts   provide wxFont::AddPrivateFont() method], wxUSE_PRIVATE_FONTS)
 WX_ARG_FEATURE(radiobox,    [  --enable-radiobox       use wxRadioBox class], wxUSE_RADIOBOX)
 WX_ARG_FEATURE(radiobtn,    [  --enable-radiobtn       use wxRadioButton class], wxUSE_RADIOBTN)
 WX_ARG_FEATURE(richmsgdlg,  [  --enable-richmsgdlg     use wxRichMessageDialog class], wxUSE_RICHMSGDLG)
@@ -6894,6 +6895,24 @@ fi
 if test "$wxUSE_PREFERENCES_EDITOR" = "yes"; then
     AC_DEFINE(wxUSE_PREFERENCES_EDITOR)
     SAMPLES_SUBDIRS="$SAMPLES_SUBDIRS preferences"
+fi
+
+if test "$wxUSE_PRIVATE_FONTS" = "yes"; then
+    if test "$wxUSE_GTK" = 1; then
+        if test "$wxUSE_PRIVATE_FONTS" = "yes"; then
+            PKG_CHECK_MODULES(PRIVATE_FONTS, [fontconfig >= 2.8.0 pangoft2 >= 1.38.0],
+                              [
+                                AC_DEFINE(wxUSE_PRIVATE_FONTS)
+                                CXXFLAGS="$PRIVATE_FONTS_CFLAGS $CXXFLAGS"
+                                GUI_TK_LIBRARY="$GUI_TK_LIBRARY $PRIVATE_FONTS_LIBS"
+                              ],
+                              [AC_MSG_WARN([run-time font loading won't be supported by wxFont])])
+        fi
+    elif test "$wxUSE_MAC" = 1 -o "$wxUSE_MSW" = 1; then
+        dnl In these ports we don't need anything special.
+        AC_DEFINE(wxUSE_PRIVATE_FONTS)
+    fi
+    dnl And in the other ports wxUSE_PRIVATE_FONTS is not supported.
 fi
 
 if test "$wxUSE_DIALUP_MANAGER" = "yes"; then
