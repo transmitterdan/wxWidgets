@@ -4,6 +4,7 @@ branches:
   only:
   - master
   - WX_3_0_BRANCH
+  - android_patches
 
 skip_commits:
   files:
