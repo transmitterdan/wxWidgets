@@ -635,7 +635,7 @@ PanGestureRecognizer::recognize(QGesture* pGesture, QObject *pWatched, QEvent *p
     {
         case QEvent::TouchBegin:
         {
-            if(1/*!m_started*/)
+            if(true)
             {
                 QTouchEvent::TouchPoint p1 = ev->touchPoints().at(0);
                 m_startPoint = p1.startScreenPos().toPoint();
@@ -645,7 +645,6 @@ PanGestureRecognizer::recognize(QGesture* pGesture, QObject *pWatched, QEvent *p
                 pPan->setOffset(QPointF(0,0));
 
                 result = QGestureRecognizer::MayBeGesture;
-                m_started = 1;
             }
         }
         break;
@@ -673,7 +672,6 @@ PanGestureRecognizer::recognize(QGesture* pGesture, QObject *pWatched, QEvent *p
             {
                 result = QGestureRecognizer::FinishGesture;
             }
-            m_started = 0;
 
         }
         break;
@@ -717,8 +715,6 @@ void
 PanGestureRecognizer::reset(QGesture *pGesture)
 {
     pGesture->setProperty("startPoint", QVariant(QVariant::Invalid));
-    m_started = 0;
-//   qDebug("Swipe recognize reset");
     parent::reset(pGesture);
 }
 
